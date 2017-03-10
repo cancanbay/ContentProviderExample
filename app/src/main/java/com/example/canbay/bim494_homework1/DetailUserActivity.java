@@ -35,10 +35,5 @@ public class DetailUserActivity extends AppCompatActivity {
         description.setText( preferences.getString("peopledescription", "N/A"));
 
     }
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main,menu);
-        return super.onCreateOptionsMenu(menu);
-    }
 
 }

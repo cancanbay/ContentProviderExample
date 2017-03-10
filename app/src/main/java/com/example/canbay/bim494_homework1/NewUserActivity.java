@@ -25,8 +25,7 @@ public class NewUserActivity extends AppCompatActivity {
     EditText etName;
     EditText etSurname;
     EditText etDescription;
-    static FileOutputStream fos = null;
-    String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/text/";
+    String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/text";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -59,9 +58,8 @@ public class NewUserActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                int count = 0;
                 etName.getText();
-                File file = new File(path +"file.txt");
+                File file = new File(path +"/file.txt");
                     if(Read(file).equals("")) {
                         String saveText[] = String.valueOf(etName.getText() + "\n" + etSurname.getText() + "\n" + etDescription.getText() + "\n").split(System.getProperty("line.separator"));
                         Save(file, saveText);
@@ -77,7 +75,6 @@ public class NewUserActivity extends AppCompatActivity {
                             FileWriter fw = new FileWriter(file,true); //the true will append the new data
                             fw.write("\n"+etName.getText()+"\n"+etSurname.getText()+"\n"+etDescription.getText());//appends the string to the file
                             fw.close();
-
                             MainActivity.people.add(new Person(etName.getText().toString(), etSurname.getText().toString(), etDescription.getText().toString()));
                             MainActivity.adapter.notifyDataSetChanged();
 
@@ -122,6 +119,7 @@ public class NewUserActivity extends AppCompatActivity {
     }
 
     public static void Save(File file,String[] data){
+        FileOutputStream fos = null;
         try {
              fos = new FileOutputStream(file);
         } catch (FileNotFoundException e) {
@@ -146,7 +144,9 @@ public class NewUserActivity extends AppCompatActivity {
         {
             try
             {
+                if(fos !=null){
                 fos.close();
+                }
             }
             catch (IOException e) {e.printStackTrace();}
         }
@@ -164,7 +164,9 @@ public class NewUserActivity extends AppCompatActivity {
                 text.append('\n');
 
             }
-            br.close();
+            if(br != null) {
+                br.close();
+            }
         }
         catch (IOException e) {
 

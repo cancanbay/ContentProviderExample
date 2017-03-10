@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
             "Alan Mathison Turing (23 June 1912 – 7 June 1954) was an English computer scientist, mathematician, logician," +
             " cryptanalyst and theoretical biologist."};
     static final List<Person> people = new ArrayList<Person>();
-    String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/text/";
+    String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/text";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,14 +51,13 @@ public class MainActivity extends AppCompatActivity {
         people.add(new Person(isimler[0],soyadlar[0],aciklamalar[0]));
         people.add(new Person(isimler[1],soyadlar[1],aciklamalar[1]));
         people.add(new Person(isimler[2],soyadlar[2],aciklamalar[2]));
-       // ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,isimler);
         adapter = new CustomAdapter(this,people);
         list.setAdapter(adapter);
         android.support.v7.app.ActionBar ab = getSupportActionBar();
         ab.setTitle("Provider Example");
         ab.setBackgroundDrawable(getResources().getDrawable(R.drawable.background_action));
 
-        File file = new File(path +"file.txt");
+        File file = new File(path +"/file.txt");
         if(!NewUserActivity.Read(file).equals("")) {
             String text = NewUserActivity.Read(file);
             String textStr[] = text.split("\\r\\n|\\n|\\r");
