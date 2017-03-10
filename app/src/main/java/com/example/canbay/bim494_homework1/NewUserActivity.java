@@ -11,7 +11,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 import java.io.*;
 
 import Model.Person;
@@ -60,18 +59,38 @@ public class NewUserActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
+                int count = 0;
                 etName.getText();
                 File file = new File(path +"file.txt");
-                String saveText[] = String.valueOf(etName.getText() +"\n"+ etSurname.getText() +"\n"+ etDescription.getText()+"\n").split(System.getProperty("line.separator"));
-                Save(file,saveText);
-                Read(file);
-                MainActivity.people.add(new Person(Read(file),"",""));
+                    if(Read(file).equals("")) {
+                        String saveText[] = String.valueOf(etName.getText() + "\n" + etSurname.getText() + "\n" + etDescription.getText() + "\n").split(System.getProperty("line.separator"));
+                        Save(file, saveText);
+                        Read(file);
+                        String text = Read(file);
+                        String textStr[] = text.split("\\r\\n|\\n|\\r");
+                        MainActivity.people.add(new Person(textStr[0],textStr[1],textStr[2]));
+                        MainActivity.adapter.notifyDataSetChanged();
+                    }
+                else{
+                        try
+                        {
+                            FileWriter fw = new FileWriter(file,true); //the true will append the new data
+                            fw.write("\n"+etName.getText()+"\n"+etSurname.getText()+"\n"+etDescription.getText());//appends the string to the file
+                            fw.close();
+
+                            MainActivity.people.add(new Person(etName.getText().toString(), etSurname.getText().toString(), etDescription.getText().toString()));
+                            MainActivity.adapter.notifyDataSetChanged();
+
+                        }
+                        catch(IOException ioe)
+                        {
+                            System.err.println("IOException: " + ioe.getMessage());
+                        }
+                    }
+
                 if(MainActivity.people.size() !=3) {
                     MainActivity.adapter.notifyDataSetChanged();
                 }
-
-
-
 
                 SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                 SharedPreferences.Editor editor = preferences.edit();
@@ -87,15 +106,13 @@ public class NewUserActivity extends AppCompatActivity {
         });
     }
 
-
-
     @Override
     protected void onPause() {
         super.onPause();
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         SharedPreferences.Editor editor = preferences.edit();
 
-        if(!etName.getText().toString().equals("")  && !etSurname.getText().toString().equals("") && !etDescription.getText().toString().equals("")  ) {
+        if(!etName.getText().toString().equals("")  || !etSurname.getText().toString().equals("") || !etDescription.getText().toString().equals("")  ) {
             editor.putString("name", etName.getText().toString());
             editor.putString("surname", etSurname.getText().toString());
             editor.putString("description", etDescription.getText().toString());
@@ -135,50 +152,6 @@ public class NewUserActivity extends AppCompatActivity {
         }
     }
 
-    public static String[] Load(File file)
-    {
-        FileInputStream fis = null;
-        try
-        {
-            fis = new FileInputStream(file);
-        }
-        catch (FileNotFoundException e) {e.printStackTrace();}
-        InputStreamReader isr = new InputStreamReader(fis);
-        BufferedReader br = new BufferedReader(isr);
-
-        String test;
-        int anzahl=0;
-        try
-        {
-            while ((test=br.readLine()) != null)
-            {
-                anzahl++;
-            }
-        }
-        catch (IOException e) {e.printStackTrace();}
-
-        try
-        {
-            fis.getChannel().position(0);
-        }
-        catch (IOException e) {e.printStackTrace();}
-
-        String[] array = new String[anzahl];
-
-        String line;
-        int i = 0;
-        try
-        {
-            while((line=br.readLine())!=null)
-            {
-                array[i] = line;
-                i++;
-            }
-        }
-        catch (IOException e) {e.printStackTrace();}
-        return array;
-    }
-
     public static String Read(File file){
         StringBuilder text = new StringBuilder();
         String line="";
@@ -199,7 +172,5 @@ public class NewUserActivity extends AppCompatActivity {
 
         return text.toString();
     }
-
-
 
 }

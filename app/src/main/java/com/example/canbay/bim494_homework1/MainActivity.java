@@ -59,12 +59,13 @@ public class MainActivity extends AppCompatActivity {
         ab.setBackgroundDrawable(getResources().getDrawable(R.drawable.background_action));
 
         File file = new File(path +"file.txt");
-
-        String text = NewUserActivity.Read(file);
-        String textStr[] = text.split("\\r\\n|\\n|\\r");
-        MainActivity.people.add(new Person(textStr[0],textStr[1],textStr[2]));
-        if(MainActivity.people.size() !=3) {
-            MainActivity.adapter.notifyDataSetChanged();
+        if(!NewUserActivity.Read(file).equals("")) {
+            String text = NewUserActivity.Read(file);
+            String textStr[] = text.split("\\r\\n|\\n|\\r");
+            for(int i =0; i<textStr.length;i+=3) {
+                MainActivity.people.add(new Person(textStr[i], textStr[i+1], textStr[i+2]));
+                MainActivity.adapter.notifyDataSetChanged();
+            }
         }
 
        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
